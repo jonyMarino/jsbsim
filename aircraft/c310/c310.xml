@@ -281,6 +281,97 @@
                 <p_factor> 0.1 </p_factor>
             </thruster>
         </engine>
+
+        <!-- - -->
+        <!--Throttle 1-->
+        <engine file="engIO470D">
+            <feed>0</feed>
+            <feed>1</feed>
+            <feed>2</feed>
+            <feed>3</feed>
+            <thruster file="propC10v">
+                <location unit="FT">
+                    <x> 6.4523493783272461601577048042067 </x>
+                    <y> -6.4523493783272461601577048042067 </y>
+                    <z> 1.5 </z>
+                </location>
+                <orient unit="DEG">
+                    <roll> 0.0 </roll>
+                    <pitch> -90 </pitch>
+                    <yaw> 0.0 </yaw>
+                </orient>
+                <sense> 1 </sense>
+                <p_factor> 0.1 </p_factor>
+            </thruster>
+        </engine>
+
+        <!--Throttle 2-->
+        <engine file="engIO470D">
+            <feed>0</feed>
+            <feed>1</feed>
+            <feed>2</feed>
+            <feed>3</feed>
+            <thruster file="propC10v">
+                <location unit="FT">
+                    <x> 6.4523493783272461601577048042067 </x>
+                    <y> 6.4523493783272461601577048042067 </y>
+                    <z> 1.5 </z>
+                </location>
+                <orient unit="DEG">
+                    <roll> 0.0 </roll>
+                    <pitch> -90 </pitch>
+                    <yaw> 0.0 </yaw>
+                </orient>
+                <sense> -1 </sense>
+                <p_factor> 0.1 </p_factor>
+            </thruster>
+        </engine>
+
+        <!--Throttle 3-->
+        <engine file="engIO470D">
+            <feed>0</feed>
+            <feed>1</feed>
+            <feed>2</feed>
+            <feed>3</feed>
+            <thruster file="propC10v">
+                <location unit="FT">
+                    <x> -6.4523493783272461601577048042067 </x>
+                    <y> 6.4523493783272461601577048042067 </y>
+                    <z> 1.5 </z>
+                </location>
+                <orient unit="DEG">
+                    <roll> 0.0 </roll>
+                    <pitch> -90 </pitch>
+                    <yaw> 0.0 </yaw>
+                </orient>
+                <sense> 1 </sense>
+                <p_factor> 0.1 </p_factor>
+            </thruster>
+        </engine>
+
+        <!--Throttle 4-->
+        <engine file="engIO470D">
+            <feed>0</feed>
+            <feed>1</feed>
+            <feed>2</feed>
+            <feed>3</feed>
+            <thruster file="propC10v">
+                <location unit="FT">
+                    <x> -6.4523493783272461601577048042067 </x>
+                    <y> -6.4523493783272461601577048042067 </y>
+                    <z> 1.5 </z>
+                </location>
+                <orient unit="DEG">
+                    <roll> 0.0 </roll>
+                    <pitch> -90 </pitch>
+                    <yaw> 0.0 </yaw>
+                </orient>
+                <sense> -1 </sense>
+                <p_factor> 0.1 </p_factor>
+            </thruster>
+        </engine>
+
+        <!-- - -->
         <tank type="FUEL">    <!-- Tank number 0 -->
             <location unit="IN">
                 <x> 35 </x>

@@ -9,12 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # MSVC specific compile definitions
 set(MSVC_COMPILE_DEFINITIONS _USE_MATH_DEFINES NOMINMAX)
 
-# Set the C and C++ compilers to Clang
-set(CMAKE_C_COMPILER "clang")
-set(CMAKE_CXX_COMPILER "clang++")
-
-# Optionally, set the C++ standard library to libc++ if using Clang
-#set(CMAKE_CXX_STANDARD_LIBRARIES "-lc++")
 
 ################################################################################
 # Init the list of libraries that JSBSim links with                            #

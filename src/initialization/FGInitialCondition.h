@@ -62,8 +62,8 @@ namespace JSBSim {
 class FGFDMExec;
 class FGMatrix33;
 class FGColumnVector3;
-class FGAtmosphere;
 class FGAircraft;
+class FGAuxiliary;
 class FGPropertyManager;
 class Element;
 
@@ -444,6 +444,10 @@ public:
   void SetWindNEDFpsIC(double wN, double wE, double wD);
 
   /** Sets the initial total wind speed.
+      @param mag Initial wind velocity magnitude in feet/second */
+  void SetWindMagFpsIC(double mag) { SetWindMagKtsIC(mag * fpstokts); }
+
+  /** Sets the initial total wind speed.
       @param mag Initial wind velocity magnitude in knots */
   void SetWindMagKtsIC(double mag);
 
@@ -505,7 +509,7 @@ public:
 
   /** Gets the initial total wind velocity in feet/sec.
       @return Initial wind velocity in feet/second */
-  double GetWindFpsIC(void) const;
+  double GetWindMagFpsIC(void) const;
 
   /** Gets the initial wind direction.
       @return Initial wind direction in feet/second */
@@ -667,9 +671,9 @@ public:
 
   /** Loads the initial conditions.
       @param rstname The name of an initial conditions file
-      @param useStoredPath true if the stored path to the IC file should be used
+      @param useAircraftPath true if path is given relative to the aircraft path.
       @return true if successful */
-  bool Load(const SGPath& rstname, bool useStoredPath = true );
+  bool Load(const SGPath& rstname, bool useAircraftPath = true );
 
   /** Is an engine running ?
       @param index of the engine to be checked
@@ -705,8 +709,8 @@ private:
   int trimRequested;
 
   FGFDMExec *fdmex;
-  std::shared_ptr<FGAtmosphere> Atmosphere;
   std::shared_ptr<FGAircraft> Aircraft;
+  std::shared_ptr<FGAuxiliary> Auxiliary;
 
   bool Load_v1(Element* document);
   bool Load_v2(Element* document);

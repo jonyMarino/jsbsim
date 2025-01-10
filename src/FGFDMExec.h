@@ -69,6 +69,7 @@ class FGInertial;
 class FGInput;
 class FGPropulsion;
 class FGMassBalance;
+class FGLogger;
 
 class TrimFailureException : public BaseException {
   public:
@@ -250,6 +251,14 @@ public:
       each scheduled model without integrating i.e. dt=0.
       @return true if successful */
   bool RunIC(void);
+
+  /** Loads the planet.
+      Loads the definition of the planet on which the vehicle will evolve such as
+      its radius, gravity or its atmosphere characteristics.
+      @param PlanetPath The name of a planet definition file
+      @param useAircraftPath true if path is given relative to the aircraft path.
+      @return true if successful */
+  bool LoadPlanet(const SGPath& PlanetPath, bool useAircraftPath = true);
 
   /** Loads an aircraft model.
       @param AircraftPath path to the aircraft/ directory. For instance:
@@ -467,6 +476,11 @@ public:
   * - tNone  */
   void DoTrim(int mode);
 
+  /** Executes linearization with state-space output
+   * You must trim first to get an accurate state-space model
+   */
+  void DoLinearization(int);
+
   /// Disables data logging to all outputs.
   void DisableOutput(void) { Output->Disable(); }
   /// Enables data logging to all outputs.
@@ -494,6 +508,9 @@ public:
   void ResetToInitialConditions(int mode);
   /// Sets the debug level.
   void SetDebugLevel(int level) {debug_lvl = level;}
+
+  void SetLogger(std::shared_ptr<FGLogger> logger) {Log = logger;}
+  std::shared_ptr<FGLogger> GetLogger(void) const {return Log;}
 
   struct PropertyCatalogStructure {
     /// Name of the property.
@@ -613,10 +630,14 @@ public:
   auto GetRandomGenerator(void) const { return RandomGenerator; }
 
 private:
+  // Declare Log first so that it's destroyed last: the logger may be used by
+  // some FGFDMExec members to log data during their destruction.
+  std::shared_ptr<FGLogger> Log;
+
   unsigned int Frame;
   unsigned int IdFDM;
   int disperse;
-  unsigned short Terminate;
+  bool Terminate;
   double dT;
   double saved_dT;
   double sim_time;
@@ -687,6 +708,7 @@ private:
   int  SRand(void) const {return RandomSeed;}
   void LoadInputs(unsigned int idx);
   void LoadPlanetConstants(void);
+  bool LoadPlanet(Element* el);
   void LoadModelConstants(void);
   bool Allocate(void);
   bool DeAllocate(void);

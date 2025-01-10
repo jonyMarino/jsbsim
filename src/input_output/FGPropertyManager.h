@@ -42,6 +42,8 @@ INCLUDES
 #endif
 
 #include <string>
+#include <list>
+#include <memory>
 #include "simgear/props/props.hxx"
 #if !PROPS_STANDALONE
 # include "simgear/math/SGMath.hxx"
@@ -428,13 +430,29 @@ class JSBSIM_API FGPropertyManager
      */
     void Untie (SGPropertyNode* property);
 
+    /// Unbind all properties bound by this manager to an external data source.
+    void Unbind (void);
+
     /**
-     * Unbind all properties bound by this manager to an external data source.
+     * Unbind all properties bound by this manager to an instance.
      *
      * Classes should use this function to release control of any
      * properties they have bound using this property manager.
+     * @param instance The instance which properties shall be unbound.
      */
-    void Unbind (void);
+    void Unbind(const void* instance);
+
+    /**
+     * Unbind all properties bound by this manager to an instance.
+     *
+     * Classes should use this function to release control of any
+     * properties they have bound using this property manager.
+     * Helper function for shared_ptr
+     * @see Unbind(const void*)
+     */
+    template <typename T> void Unbind(const std::shared_ptr<T>& instance) {
+      Unbind(instance.get());
+    }
 
     /**
      * Tie a property to an external variable.
@@ -450,15 +468,15 @@ class JSBSIM_API FGPropertyManager
     {
       SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
-        cerr << "Could not get or create property " << name << endl;
+        std::cerr << "Could not get or create property " << name << std::endl;
         return;
       }
 
       if (!property->tie(SGRawValuePointer<T>(pointer), false))
-        cerr << "Failed to tie property " << name << " to a pointer" << endl;
+          std::cerr << "Failed to tie property " << name << " to a pointer" << std::endl;
       else {
-        tied_properties.push_back(property);
-        if (FGJSBBase::debug_lvl & 0x20) cout << name << endl;
+        tied_properties.push_back(PropertyState(property, nullptr));
+        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
 
@@ -489,9 +507,9 @@ class JSBSIM_API FGPropertyManager
         std::cerr << "Failed to tie property " << name << " to functions"
                   << std::endl;
       else {
+        tied_properties.push_back(PropertyState(property, nullptr));
         if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
         if (!getter) property->setAttribute(SGPropertyNode::READ, false);
-        tied_properties.push_back(property);
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
@@ -526,9 +544,9 @@ class JSBSIM_API FGPropertyManager
         std::cerr << "Failed to tie property " << name << " to indexed functions"
                   << std::endl;
       else {
+        tied_properties.push_back(PropertyState(property, nullptr));
         if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
         if (!getter) property->setAttribute(SGPropertyNode::READ, false);
-        tied_properties.push_back(property);
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
@@ -563,9 +581,9 @@ class JSBSIM_API FGPropertyManager
         std::cerr << "Failed to tie property " << name << " to object methods"
                   << std::endl;
       else {
+        tied_properties.push_back(PropertyState(property, obj));
         if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
         if (!getter) property->setAttribute(SGPropertyNode::READ, false);
-        tied_properties.push_back(property);
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
@@ -601,15 +619,31 @@ class JSBSIM_API FGPropertyManager
         std::cerr << "Failed to tie property " << name
                   << " to indexed object methods" << std::endl;
       else {
+        tied_properties.push_back(PropertyState(property, obj));
         if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
         if (!getter) property->setAttribute(SGPropertyNode::READ, false);
-        tied_properties.push_back(property);
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
    }
 
   private:
-    std::vector<SGPropertyNode_ptr> tied_properties;
+    struct PropertyState {
+      SGPropertyNode_ptr node;
+      const void* BindingInstance = nullptr;
+      bool WriteAttribute = true;
+      bool ReadAttribute = true;
+      PropertyState(SGPropertyNode* property, const void* instance)
+        : node(property), BindingInstance(instance) {
+        WriteAttribute = node->getAttribute(SGPropertyNode::WRITE);
+        ReadAttribute = node->getAttribute(SGPropertyNode::READ);
+      }
+      void untie(void) {
+        node->setAttribute(SGPropertyNode::WRITE, WriteAttribute);
+        node->setAttribute(SGPropertyNode::READ, ReadAttribute);
+        node->untie();
+      }
+    };
+    std::list<PropertyState> tied_properties;
     FGPropertyNode_ptr root;
 };
 }

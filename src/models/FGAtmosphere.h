@@ -208,11 +208,14 @@ public:
 
   struct Inputs {
     double altitudeASL;
+    double GeodLatitudeDeg;
+    double LongitudeDeg;
   } in;
 
   static constexpr double StdDaySLtemperature = 518.67;
   static constexpr double StdDaySLpressure = 2116.228;
-  static const double StdDaySLsoundspeed;
+  const double StdDaySLsoundspeed;
+  static constexpr double SHRatio = 1.4;
 
 protected:
   // Sea level conditions
@@ -265,12 +268,12 @@ protected:
   /// Check that the pressure is within plausible boundaries.
   /// @param msg Message to display if the pressure is out of boundaries
   /// @param quiet Don't display the message if set to true
-  double ValidatePressure(double p, const string& msg, bool quiet=false) const;
+  double ValidatePressure(double p, const std::string& msg, bool quiet=false) const;
 
   /// Check that the temperature is within plausible boundaries.
   /// @param msg Message to display if the pressure is out of boundaries
   /// @param quiet Don't display the message if set to true
-  double ValidateTemperature(double t, const string& msg, bool quiet=false) const;
+  double ValidateTemperature(double t, const std::string& msg, bool quiet=false) const;
 
   /// @name ISA constants
   //@{
@@ -288,12 +291,13 @@ protected:
   static constexpr double Reng0 = Rstar / Mair;
   //@}
 
-  static constexpr double SHRatio = 1.4;
-
   double Reng = Reng0;
 
   virtual void bind(void);
   void Debug(int from) override;
+
+public:
+  static constexpr double StdDaySLdensity = StdDaySLpressure / (Reng0 * StdDaySLtemperature);
 };
 
 } // namespace JSBSim

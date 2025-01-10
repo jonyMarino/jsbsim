@@ -62,7 +62,6 @@ FGOutputType::FGOutputType(FGFDMExec* fdmex) :
   Aerodynamics = FDMExec->GetAerodynamics();
   Auxiliary = FDMExec->GetAuxiliary();
   Aircraft = FDMExec->GetAircraft();
-  Atmosphere = FDMExec->GetAtmosphere();
   Winds = FDMExec->GetWinds();
   Propulsion = FDMExec->GetPropulsion();
   MassBalance = FDMExec->GetMassBalance();
@@ -185,9 +184,9 @@ bool FGOutputType::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGOutputType::Run(void)
+bool FGOutputType::Run(bool Holding)
 {
-  if (FGModel::Run(false)) return true;
+  if (FGModel::Run(Holding)) return true;
   if (!enabled) return true;
 
   RunPreFunctions();

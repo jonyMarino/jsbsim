@@ -7,7 +7,7 @@ project(JSBSim)
 
 set(PROJECT_VERSION_MAJOR "1")
 set(PROJECT_VERSION_MINOR "2")
-set(PROJECT_VERSION_PATCH "0.dev1")
+set(PROJECT_VERSION_PATCH "2.dev1")
 set(PROJECT_CONTACT_EMAIL "jsbsim-devel@lists.sourceforge.net")
 set(PROJECT_CONTACT_VENDOR "The JSBSim team")
 
@@ -114,13 +114,13 @@ endif(BUILD_MATLAB_SFUNCTION)
 find_package(CxxTest)
 
 if (CXXTEST_FOUND)
-  include_directories(${PROJECT_SOURCE_DIR}/src)
   enable_testing()
   add_subdirectory(tests/unit_tests)
   list(APPEND LCOV_REMOVE_PATTERNS "'*/JSBSim.cpp'")
   list(APPEND LCOV_REMOVE_PATTERNS "'*/GeographicLib/*'")
   list(APPEND LCOV_REMOVE_PATTERNS "'*/simgear/*'")
   list(APPEND LCOV_REMOVE_PATTERNS "'*/unit_tests/*'")
+  list(APPEND LCOV_REMOVE_PATTERNS "'*/models/atmosphere/MSIS/*'")
   coverage_evaluate()
 endif(CXXTEST_FOUND)
 

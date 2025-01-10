@@ -73,8 +73,6 @@ namespace boost {
 // XXX This whole file should be in the simgear namespace, but I don't
 // have the guts yet...
 
-using namespace std;
-
 namespace simgear
 {
 
@@ -230,7 +228,7 @@ public:
      */
     virtual simgear::props::Type getType() const = 0;
     virtual ~SGRaw() {}
-    
+
     /**
      * Create a new deep copy of this raw value.
      *
@@ -246,7 +244,7 @@ public:
 class SGRawExtended : public SGRaw
 {
 public:
-    /**    
+    /**
      * Make an SGRawValueContainer from the SGRawValue.
      *
      * This is a virtual function of SGRawExtended so that
@@ -725,7 +723,7 @@ typedef std::vector<SGPropertyNode_ptr> PropertyList;
  * <p>Any class that needs to listen for property changes must implement
  * this interface.</p>
  */
-class SGPropertyChangeListener
+class JSBSIM_API SGPropertyChangeListener
 {
 public:
   virtual ~SGPropertyChangeListener ();
@@ -1152,7 +1150,7 @@ public:
    * Set all of the mode attributes for the property node.
    */
   void setAttributes (int attr) { _attr = attr; }
-  
+
 
   //
   // Leaf Value (primitive).
@@ -1286,7 +1284,7 @@ public:
   {
     return setValue(&val[0]);
   }
-  
+
   /**
    * Set relative node to given value and afterwards make read only.
    *
@@ -1346,7 +1344,7 @@ public:
    * Print the value of the property to a stream.
    */
   std::ostream& printOn(std::ostream& stream) const;
-  
+
   //
   // Data binding.
   //
@@ -1876,56 +1874,6 @@ template<>
 inline std::string getValue<std::string>(const SGPropertyNode* node)
 {
     return node->getStringValue();
-}
-
-namespace simgear
-{
-  /**
-   * Default trait for extracting enum values from SGPropertyNode. Create your
-   * own specialization for specific enum types to enable validation of values.
-   */
-  template<class T>
-  struct enum_traits
-  {
-    /**
-     * Typename of the enum
-     */
-    static const char* name() { return typeid(T).name(); }
-
-    /**
-     * @return Default value (will be used if validation fails)
-     */
-    static T defVal() { return T(); }
-
-    /**
-     * @return Whether the given integer value has an enum value defined
-     */
-    static bool validate(int) { return true; }
-  };
-} // namespace simgear
-
-/** Extract enum from SGPropertyNode */
-template<typename T>
-#if PROPS_STANDALONE
-inline T
-#else
-inline typename boost::enable_if<boost::is_enum<T>, T>::type
-#endif
-getValue(const SGPropertyNode* node)
-{
-  typedef simgear::enum_traits<T> Traits;
-  int val = node->getIntValue();
-  if( !Traits::validate(val) )
-  {
-    SG_LOG
-    (
-      SG_GENERAL,
-      SG_WARN,
-      "Invalid value for enum (" << Traits::name() << ", val = " << val << ")"
-    );
-    return Traits::defVal();
-  }
-  return static_cast<T>(node->getIntValue());
 }
 
 inline bool setValue(SGPropertyNode* node, bool value)
